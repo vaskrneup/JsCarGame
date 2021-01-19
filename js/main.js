@@ -5,6 +5,11 @@ const CAR_PATHS = [
     'assets/images/cars/redCar.png',
     'assets/images/cars/yellowCar.png',
 ];
+const CARS = CAR_PATHS.map(carPath => {
+    const carImg = new Image();
+    carImg.src = carPath;
+    return carImg;
+});
 const HIGHWAY_WIDTHS = {
     '0': {
         x: 48,
@@ -24,31 +29,56 @@ const CANVAS_HEIGHT = 900;
 
 
 class Car {
-    constructor(x, y, width, height, imagePath, isPlayer, lane) {
+    constructor(x, y, width, height, image, isPlayer, lane) {
         this.x = x;
         this.y = y;
         this.width = width || 30;
         this.height = height || 30;
         this.lane = lane || 1;
 
-        this.image = new Image();
-        this.image.src = imagePath;
+        this.image = image;
 
         this.isPlayer = isPlayer;
+    }
+
+    moveRight = () => {
+        if (this.lane === 2) return;
+        this.lane++;
+    }
+
+    moveLeft = () => {
+        if (this.lane === 0) return;
+        this.lane--;
     }
 }
 
 
 class CarGame {
-    constructor(backgroundSelector, canvasSelector, cars) {
+    constructor(backgroundSelector, canvasSelector, cars, player) {
         this.background = document.getElementById(backgroundSelector);
 
         this.canvas = document.getElementById(canvasSelector);
         this.ctx = this.canvas.getContext("2d");
         this.cars = cars || [];
+        this.player = player;
+        console.log(player)
 
         this.gameBgPosition = 1800;
         this.speed = 5;
+
+        this.addEventHandlers()
+    }
+
+    clearCanvas = () => {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    addEventHandlers = () => {
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'd') this.player.moveRight();
+            if (e.key === 'a') this.player.moveLeft();
+            console.log("ASD")
+        })
     }
 
     animateHighway = () => {
@@ -65,9 +95,17 @@ class CarGame {
         this.ctx.drawImage(car.image, highwayWidth.x, highwayWidth.y, car.width, car.height);
     }
 
+    animatePlayer = () => {
+        const highwayWidth = HIGHWAY_WIDTHS[this.player.lane];
+        this.ctx.drawImage(this.player.image, highwayWidth.x, highwayWidth.y, this.player.width, this.player.height);
+    }
+
     gameLoop = () => {
+        this.clearCanvas();
+
         this.animateHighway();
-        this.cars.forEach(car => this.animateCar(car));
+        // this.cars.forEach(car => this.animateCar(car));
+        this.animatePlayer();
 
         requestAnimationFrame(this.gameLoop);
     }
@@ -80,9 +118,14 @@ class CarGame {
 
 function main() {
     const cars = [];
-    CAR_PATHS.forEach(path => cars.push(new Car(null, null, null, null, path, 1, 2)));
+    CARS.forEach(car => {
+        cars.push(new Car(null, null, null, null, car, 1, 2,))
+    });
 
-    const game = new CarGame('game-background', 'game-canvas', cars);
+    const game = new CarGame(
+        'game-background', 'game-canvas',
+        cars, cars[0]
+    );
     game.run();
 }
 
