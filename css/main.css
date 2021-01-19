@@ -13,6 +13,17 @@
     margin: 20px auto;
 }
 
+.score-board {
+    top: 10px;
+    left: 10px;
+    position: absolute;
+    z-index: 11;
+
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+}
+
 #game-background {
     position: relative;
     height: 2700px;
@@ -21,7 +32,7 @@
 
 #game-canvas {
     top: 0;
-    z-index: 999;
+    z-index: 10;
     position: absolute;
     height: 900px;
     width: 700px;

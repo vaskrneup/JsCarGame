@@ -61,7 +61,6 @@ class CarGame {
         this.ctx = this.canvas.getContext("2d");
         this.cars = cars || [];
         this.player = player;
-        console.log(player)
 
         this.gameBgPosition = 1800;
         this.speed = 5;
@@ -76,8 +75,7 @@ class CarGame {
     addEventHandlers = () => {
         document.addEventListener('keypress', (e) => {
             if (e.key === 'd') this.player.moveRight();
-            if (e.key === 'a') this.player.moveLeft();
-            console.log("ASD")
+            else if (e.key === 'a') this.player.moveLeft();
         })
     }
 
