@@ -1,3 +1,6 @@
+// const {random} = require("./utils");
+import {random} from './utils.js'
+
 const CAR_PATHS = [
     'assets/images/cars/blueCar.png',
     'assets/images/cars/greenCar.png',
@@ -50,6 +53,10 @@ class Car {
         if (this.lane === 0) return;
         this.lane--;
     }
+
+    moveDown = () => {
+        this.y++;
+    }
 }
 
 
@@ -59,13 +66,23 @@ class CarGame {
 
         this.canvas = document.getElementById(canvasSelector);
         this.ctx = this.canvas.getContext("2d");
+
         this.cars = cars || [];
         this.player = player;
+        this.activeCars = [];
 
         this.gameBgPosition = 1800;
         this.speed = 5;
 
+        this.point = 0;
+
         this.addEventHandlers()
+    }
+
+    generateRandomCar = () => {
+        const lane = random.randInt(0, 3);
+        const highwayWidth = HIGHWAY_WIDTHS[lane]
+        this.activeCars.push(new Car(highwayWidth.x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, lane))
     }
 
     clearCanvas = () => {
@@ -76,7 +93,7 @@ class CarGame {
         document.addEventListener('keypress', (e) => {
             if (e.key === 'd') this.player.moveRight();
             else if (e.key === 'a') this.player.moveLeft();
-        })
+        });
     }
 
     animateHighway = () => {
@@ -89,8 +106,8 @@ class CarGame {
     }
 
     animateCar = (car) => {
-        const highwayWidth = HIGHWAY_WIDTHS[car.lane];
-        this.ctx.drawImage(car.image, highwayWidth.x, highwayWidth.y, car.width, car.height);
+        car.moveDown();
+        this.ctx.drawImage(car.image, car.x, car.y - 100, car.width, car.height);
     }
 
     animatePlayer = () => {
@@ -98,11 +115,19 @@ class CarGame {
         this.ctx.drawImage(this.player.image, highwayWidth.x, highwayWidth.y, this.player.width, this.player.height);
     }
 
+    calculatePoint = (car) => {
+        if (car.x >= this.player.x) {
+            console.log("C")
+        }
+    }
+
     gameLoop = () => {
         this.clearCanvas();
 
         this.animateHighway();
-        // this.cars.forEach(car => this.animateCar(car));
+        this.activeCars.forEach(car => {
+            this.animateCar(car);
+        });
         this.animatePlayer();
 
         requestAnimationFrame(this.gameLoop);
@@ -110,19 +135,17 @@ class CarGame {
 
     run = () => {
         this.gameLoop();
+
+        this.generateRandomCar();
+
     }
 }
 
 
 function main() {
-    const cars = [];
-    CARS.forEach(car => {
-        cars.push(new Car(null, null, null, null, car, 1, 2,))
-    });
-
     const game = new CarGame(
         'game-background', 'game-canvas',
-        cars, cars[0]
+        CARS, new Car(null, null, null, null, random.choice(CARS), true, 1)
     );
     game.run();
 }
