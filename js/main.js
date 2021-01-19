@@ -5,14 +5,31 @@ const CAR_PATHS = [
     'assets/images/cars/redCar.png',
     'assets/images/cars/yellowCar.png',
 ];
+const HIGHWAY_WIDTHS = {
+    '0': {
+        x: 48,
+        y: 110
+    },
+    '1': {
+        x: 135,
+        y: 110
+    },
+    '2': {
+        x: 219,
+        y: 110
+    }
+}
+const CANVAS_WIDTH = 700;
+const CANVAS_HEIGHT = 900;
 
 
 class Car {
-    constructor(x, y, width, height, imagePath, isPlayer) {
+    constructor(x, y, width, height, imagePath, isPlayer, lane) {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.width = width || 30;
+        this.height = height || 30;
+        this.lane = lane || 1;
 
         this.image = new Image();
         this.image.src = imagePath;
@@ -44,7 +61,8 @@ class CarGame {
     }
 
     animateCar = (car) => {
-        this.ctx.drawImage(car.image, 10, 10)
+        const highwayWidth = HIGHWAY_WIDTHS[car.lane];
+        this.ctx.drawImage(car.image, highwayWidth.x, highwayWidth.y, car.width, car.height);
     }
 
     gameLoop = () => {
@@ -62,7 +80,7 @@ class CarGame {
 
 function main() {
     const cars = [];
-    CAR_PATHS.forEach(path => cars.push(new Car(null, null, null, null, path)));
+    CAR_PATHS.forEach(path => cars.push(new Car(null, null, null, null, path, 1, 2)));
 
     const game = new CarGame('game-background', 'game-canvas', cars);
     game.run();
