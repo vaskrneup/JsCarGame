@@ -40,15 +40,18 @@
 
 #game-over-text {
     display: none;
-    padding: 50px;
+    margin: 25px;
     font-size: 40px;
     color: red;
     font-weight: bold;
 }
 
-#additional-text {
-    display: none;
+.how-to-play {
+    color: white;
+    margin: 30px;
+    font-size: 30px;
 }
+
 
 #start-game-btn {
     padding: 10px;
