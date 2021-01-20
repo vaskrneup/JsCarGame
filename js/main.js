@@ -74,8 +74,12 @@ class CarGame {
         this.multipleCarProbability = 0.5;
         this.lastLane = null;
 
+        this.paused = false;
+
         this.gameBgPosition = 1800;
         this.speed = 5;
+        this.carSpeed = 2;
+        this.speedIncreaseFactor = 0.1;
 
         this.point = 0;
         this.pointSelectorDOM = document.getElementById('game-score');
@@ -88,17 +92,19 @@ class CarGame {
     }
 
     generateRandomCar = () => {
-        const lanes = [0, 1, 2];
-        const lane = random.randInt(0, 3);
-        const highwayWidth = HIGHWAY_WIDTHS[lane];
-        this.activeCars.push(new Car(highwayWidth.x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, lane));
+        if (!this.paused) {
+            const lanes = [0, 1, 2];
+            const lane = random.randInt(0, 3);
+            const highwayWidth = HIGHWAY_WIDTHS[lane];
+            this.activeCars.push(new Car(highwayWidth.x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, lane));
 
-        if (random.generateBoolean()) {
-            setTimeout(() => {
-                lanes.splice(lane, 1);
-                const newLane = random.choice(lanes);
-                this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, newLane));
-            }, 200)
+            if (random.generateBoolean()) {
+                setTimeout(() => {
+                    lanes.splice(lane, 1);
+                    const newLane = random.choice(lanes);
+                    this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, newLane));
+                }, 200)
+            }
         }
     }
 
@@ -111,6 +117,8 @@ class CarGame {
             if (e.key === 'd') this.player.moveRight();
             else if (e.key === 'a') this.player.moveLeft();
         });
+
+        document.addEventListener('visibilitychange', () => this.paused = !this.paused);
     }
 
     animateHighway = () => {
@@ -133,7 +141,11 @@ class CarGame {
     }
 
     calculatePoint = (car) => {
-        if ((car.y - car.height - this.player.height >= HIGHWAY_WIDTHS[this.player.lane].y) && !car.hasGotPoint) {
+        if ((car.y - car.height - this.player.height * 2 >= HIGHWAY_WIDTHS[this.player.lane].y) && !car.hasGotPoint) {
+            this.carSpeed += this.speedIncreaseFactor;
+            this.speed += this.speedIncreaseFactor;
+            console.log(this.speed)
+            console.log(this.carSpeed)
             this.point++;
             car.hasGotPoint = true;
             this.updatePointInDOM();
@@ -147,15 +159,17 @@ class CarGame {
     }
 
     gameLoop = () => {
-        this.clearCanvas();
+        if (!this.paused) {
+            this.clearCanvas();
 
-        this.animateHighway();
-        this.activeCars.forEach((car, i) => {
-            this.calculatePoint(car);
-            this.animateCar(car);
-            this.removeCar(car, i)
-        });
-        this.animatePlayer();
+            this.animateHighway();
+            this.activeCars.forEach((car, i) => {
+                this.calculatePoint(car);
+                this.animateCar(car);
+                this.removeCar(car, i)
+            });
+            this.animatePlayer();
+        }
 
         requestAnimationFrame(this.gameLoop);
     }
