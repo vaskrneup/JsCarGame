@@ -37,7 +37,7 @@ class Car {
         this.y = y;
         this.width = width || 30;
         this.height = height || 30;
-        this.lane = lane || 1;
+        this.lane = lane;
 
         this.image = image;
 
@@ -96,13 +96,13 @@ class CarGame {
             const lanes = [0, 1, 2];
             const lane = random.randInt(0, 3);
             const highwayWidth = HIGHWAY_WIDTHS[lane];
-            this.activeCars.push(new Car(highwayWidth.x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, lane));
+            this.activeCars.push(new Car(highwayWidth.x, -100, null, null, random.choice(this.cars), false, lane));
 
             if (random.generateBoolean()) {
                 setTimeout(() => {
                     lanes.splice(lane, 1);
                     const newLane = random.choice(lanes);
-                    this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, newLane));
+                    this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, -100, null, null, random.choice(this.cars), false, newLane));
                 }, 200)
             }
         }
@@ -132,7 +132,7 @@ class CarGame {
 
     animateCar = (car) => {
         car.moveDown();
-        this.ctx.drawImage(car.image, car.x, car.y - 100, car.width, car.height);
+        this.ctx.drawImage(car.image, car.x, car.y, car.width, car.height);
     }
 
     animatePlayer = () => {
@@ -141,11 +141,9 @@ class CarGame {
     }
 
     calculatePoint = (car) => {
-        if ((car.y - car.height - this.player.height * 2 >= HIGHWAY_WIDTHS[this.player.lane].y) && !car.hasGotPoint) {
+        if ((car.y >= HIGHWAY_WIDTHS[this.player.lane].y) && !car.hasGotPoint) {
             this.carSpeed += this.speedIncreaseFactor;
             this.speed += this.speedIncreaseFactor;
-            console.log(this.speed)
-            console.log(this.carSpeed)
             this.point++;
             car.hasGotPoint = true;
             this.updatePointInDOM();
@@ -158,6 +156,14 @@ class CarGame {
         }
     }
 
+    detectCrash = (car) => {
+        const playerY = HIGHWAY_WIDTHS[this.player.lane].y;
+
+        if ((this.player.lane === car.lane) && ((playerY >= car.y) && (playerY <= car.y + car.height))) {
+            this.paused = true;
+        }
+    }
+
     gameLoop = () => {
         if (!this.paused) {
             this.clearCanvas();
@@ -167,6 +173,7 @@ class CarGame {
                 this.calculatePoint(car);
                 this.animateCar(car);
                 this.removeCar(car, i)
+                this.detectCrash(car)
             });
             this.animatePlayer();
         }
@@ -175,9 +182,9 @@ class CarGame {
     }
 
     run = () => {
+        this.generateRandomCar();
+        // setInterval(this.generateRandomCar, 2000)
         this.gameLoop();
-
-        setInterval(this.generateRandomCar, 2000)
     }
 }
 
