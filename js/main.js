@@ -79,16 +79,29 @@ class CarGame {
         this.speedIncreaseFactor = 0.03;
 
         this.point = 0;
+        this.highScore = +localStorage.getItem('highScore') || 0;
         this.pointSelectorDOM = document.getElementById('game-score');
+        this.highScoreSelectorDOM = document.getElementById('high-score');
 
-        this.addEventHandlers()
+        this.updateHighScoreInDOM();
+        this.addEventHandlers();
     }
 
     updatePointInDOM = () => {
         this.pointSelectorDOM.innerText = this.point.toString();
+        this.updateHighScoreInDOM();
+    }
+
+    updateHighScoreInDOM = () => {
+        this.highScoreSelectorDOM.innerText = this.highScore;
     }
 
     handleGameOver = () => {
+        if (this.highScore < this.point) {
+            localStorage.setItem('highScore', this.point);
+            this.highScore = this.point;
+            this.updateHighScoreInDOM();
+        }
         this.paused = true;
         this.speed = 5;
         this.carSpeed = 1;
@@ -105,9 +118,11 @@ class CarGame {
 
             if (random.generateBoolean(this.multipleCarProbability)) {
                 setTimeout(() => {
-                    lanes.splice(lane, 1);
-                    const newLane = random.choice(lanes);
-                    this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, -100, null, null, random.choice(this.cars), false, newLane, this.carSpeed));
+                    if (!this.paused) {
+                        lanes.splice(lane, 1);
+                        const newLane = random.choice(lanes);
+                        this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, -100, null, null, random.choice(this.cars), false, newLane, this.carSpeed));
+                    }
                 }, 200)
             }
         }
