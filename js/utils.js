@@ -33,7 +33,7 @@ class Random {
     }
 
     generateBoolean = (trueThreshold = 0.5) => {
-        return Math.random() > trueThreshold;
+        return Math.random() < trueThreshold;
     }
 }
 
