@@ -8,7 +8,19 @@ const CAR_PATHS = [
     'assets/images/cars/redCar.png',
     'assets/images/cars/yellowCar.png',
 ];
+const ROTATED_CAR_PATHS = [
+    'assets/images/cars/blueCarRotate.png',
+    'assets/images/cars/greenCarRotate.png',
+    'assets/images/cars/purpleCarRotate.png',
+    'assets/images/cars/redCarRotate.png',
+    'assets/images/cars/yellowCarRotate.png',
+];
 const CARS = CAR_PATHS.map(carPath => {
+    const carImg = new Image();
+    carImg.src = carPath;
+    return carImg;
+});
+const ROTATED_CARS = ROTATED_CAR_PATHS.map(carPath => {
     const carImg = new Image();
     carImg.src = carPath;
     return carImg;
@@ -238,7 +250,7 @@ class CarGame {
 function main() {
     const game = new CarGame(
         'game-background', 'game-canvas',
-        CARS, new Car(null, null, null, null, random.choice(CARS), true, 1)
+        ROTATED_CARS, new Car(null, null, null, null, random.choice(CARS), true, 1)
     );
 
     const startGameBtn = document.getElementById('start-game-btn');
