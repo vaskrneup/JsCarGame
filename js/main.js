@@ -162,7 +162,7 @@ class CarGame {
     }
 
     animateHighway = () => {
-        if (this.gameBgPosition <= 900) {
+        if (this.gameBgPosition <= 800) {
             this.gameBgPosition = 1800;
         }
 
