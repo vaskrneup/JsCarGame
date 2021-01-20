@@ -32,7 +32,7 @@ const CANVAS_HEIGHT = 900;
 
 
 class Car {
-    constructor(x, y, width, height, image, isPlayer, lane) {
+    constructor(x, y, width, height, image, isPlayer, lane, speed) {
         this.x = x;
         this.y = y;
         this.width = width || 30;
@@ -40,6 +40,7 @@ class Car {
         this.lane = lane;
 
         this.image = image;
+        this.speed = speed;
 
         this.isPlayer = isPlayer;
         this.hasGotPoint = false;
@@ -56,7 +57,7 @@ class Car {
     }
 
     moveDown = () => {
-        this.y++;
+        this.y += this.speed;
     }
 }
 
@@ -78,7 +79,7 @@ class CarGame {
 
         this.gameBgPosition = 1800;
         this.speed = 5;
-        this.carSpeed = 2;
+        this.carSpeed = 1;
         this.speedIncreaseFactor = 0.1;
 
         this.point = 0;
@@ -96,13 +97,13 @@ class CarGame {
             const lanes = [0, 1, 2];
             const lane = random.randInt(0, 3);
             const highwayWidth = HIGHWAY_WIDTHS[lane];
-            this.activeCars.push(new Car(highwayWidth.x, -100, null, null, random.choice(this.cars), false, lane));
+            this.activeCars.push(new Car(highwayWidth.x, -100, null, null, random.choice(this.cars), false, lane, this.carSpeed));
 
             if (random.generateBoolean()) {
                 setTimeout(() => {
                     lanes.splice(lane, 1);
                     const newLane = random.choice(lanes);
-                    this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, -100, null, null, random.choice(this.cars), false, newLane));
+                    this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, -100, null, null, random.choice(this.cars), false, newLane, this.carSpeed));
                 }, 200)
             }
         }
@@ -131,6 +132,7 @@ class CarGame {
     }
 
     animateCar = (car) => {
+        car.speed = this.carSpeed;
         car.moveDown();
         this.ctx.drawImage(car.image, car.x, car.y, car.width, car.height);
     }
