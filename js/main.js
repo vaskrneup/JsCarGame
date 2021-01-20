@@ -123,7 +123,7 @@ class CarGame {
                         const newLane = random.choice(lanes);
                         this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, -100, null, null, random.choice(this.cars), false, newLane, this.carSpeed));
                     }
-                }, 200)
+                }, random.randRange(300, 900))
             }
         }
     }
