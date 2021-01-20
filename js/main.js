@@ -67,11 +67,13 @@ class CarGame {
         this.ctx = this.canvas.getContext("2d");
 
         this.cars = cars || [];
+        this._cars = cars || [];
         this.player = player;
+        this._player = player;
         this.activeCars = [];
         this.multipleCarProbability = 0.5;
 
-        this.paused = false;
+        this.paused = true;
 
         this.gameBgPosition = 1800;
         this.speed = 5;
@@ -83,7 +85,11 @@ class CarGame {
         this.pointSelectorDOM = document.getElementById('game-score');
         this.highScoreSelectorDOM = document.getElementById('high-score');
 
-        this.updateHighScoreInDOM();
+        this.startGameBtn = document.getElementById('start-game-btn');
+        this.gameOverText = document.getElementById('game-over-text');
+        this.startScreen = document.querySelector('.start-screen');
+
+        this.first = true;
         this.addEventHandlers();
     }
 
@@ -102,11 +108,25 @@ class CarGame {
             this.highScore = this.point;
             this.updateHighScoreInDOM();
         }
+
+        this.startScreen.style.display = 'block';
+        this.gameOverText.style.display = 'block';
+        this.startGameBtn.innerText = 'PLAY AGAIN';
+
+        this.cars = this._cars;
+        this.player = this._player;
+        this.activeCars = [];
+        this.multipleCarProbability = 0.5;
+
         this.paused = true;
+
+        this.gameBgPosition = 1800;
         this.speed = 5;
         this.carSpeed = 1;
         this.speedIncreaseFactor = 0.03;
+
         this.point = 0;
+        this.first = false;
     }
 
     generateRandomCar = () => {
@@ -189,7 +209,7 @@ class CarGame {
     gameLoop = () => {
         if (!this.paused) {
             this.clearCanvas();
-
+            console.log(this.carSpeed)
             this.animateHighway();
             this.activeCars.forEach((car, i) => {
                 this.calculatePoint(car);
@@ -204,9 +224,13 @@ class CarGame {
     }
 
     run = () => {
+        this.updateHighScoreInDOM();
+        this.paused = false;
         // this.generateRandomCar();
-        setInterval(this.generateRandomCar, 2000)
-        this.gameLoop();
+        if (this.first) {
+            setInterval(this.generateRandomCar, 2000)
+            this.gameLoop();
+        }
     }
 }
 
@@ -222,7 +246,7 @@ function main() {
         const startScreen = document.querySelector('.start-screen');
         startScreen.style.display = 'none';
         game.run();
-    })
+    });
 }
 
 main();

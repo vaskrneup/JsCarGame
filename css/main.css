@@ -34,8 +34,19 @@
 }
 
 .start-screen-container {
-    margin-top: 400px;
-    
+    margin-top: 300px;
+}
+
+#game-over-text {
+    display: none;
+    padding: 50px;
+    font-size: 40px;
+    color: red;
+    font-weight: bold;
+}
+
+#additional-text {
+    display: none;
 }
 
 #game-background {
