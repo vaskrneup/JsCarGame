@@ -71,6 +71,8 @@ class CarGame {
         this.cars = cars || [];
         this.player = player;
         this.activeCars = [];
+        this.multipleCarProbability = 0.5;
+        this.lastLane = null;
 
         this.gameBgPosition = 1800;
         this.speed = 5;
@@ -86,9 +88,18 @@ class CarGame {
     }
 
     generateRandomCar = () => {
+        const lanes = [0, 1, 2];
         const lane = random.randInt(0, 3);
-        const highwayWidth = HIGHWAY_WIDTHS[lane]
-        this.activeCars.push(new Car(highwayWidth.x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, lane))
+        const highwayWidth = HIGHWAY_WIDTHS[lane];
+        this.activeCars.push(new Car(highwayWidth.x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, lane));
+
+        if (random.generateBoolean()) {
+            setTimeout(() => {
+                lanes.splice(lane, 1);
+                const newLane = random.choice(lanes);
+                this.activeCars.push(new Car(HIGHWAY_WIDTHS[newLane].x, (random.randInt(1, 10)), null, null, random.choice(this.cars), false, newLane));
+            }, 200)
+        }
     }
 
     clearCanvas = () => {
@@ -152,7 +163,7 @@ class CarGame {
     run = () => {
         this.gameLoop();
 
-        this.generateRandomCar();
+        setInterval(this.generateRandomCar, 2000)
     }
 }
 

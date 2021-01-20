@@ -31,6 +31,10 @@ class Random {
     choice = (objects) => {
         return objects[this.randInt(0, objects.length)];
     }
+
+    generateBoolean = (trueThreshold = 0.5) => {
+        return Math.random() > trueThreshold;
+    }
 }
 
 export const random = new Random();
