@@ -31,6 +31,7 @@
     z-index: 12;
     height: 900px;
     width: 700px;
+    background-color: rgba(193, 193, 193, 0.7);
 }
 
 .start-screen-container {
@@ -47,6 +48,19 @@
 
 #additional-text {
     display: none;
+}
+
+#start-game-btn {
+    padding: 10px;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    background-color: rgba(193, 193, 193, 0.7);
+}
+
+#start-game-btn:hover {
+    cursor: pointer;
+    background-color: rgba(193, 193, 193, 0.9);
 }
 
 #game-background {

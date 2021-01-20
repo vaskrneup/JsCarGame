@@ -209,7 +209,7 @@ class CarGame {
     gameLoop = () => {
         if (!this.paused) {
             this.clearCanvas();
-            console.log(this.carSpeed)
+
             this.animateHighway();
             this.activeCars.forEach((car, i) => {
                 this.calculatePoint(car);
