@@ -42,6 +42,7 @@ class Car {
         this.image = image;
 
         this.isPlayer = isPlayer;
+        this.hasGotPoint = false;
     }
 
     moveRight = () => {
@@ -75,8 +76,13 @@ class CarGame {
         this.speed = 5;
 
         this.point = 0;
+        this.pointSelectorDOM = document.getElementById('game-score');
 
         this.addEventHandlers()
+    }
+
+    updatePointInDOM = () => {
+        this.pointSelectorDOM.innerText = this.point.toString();
     }
 
     generateRandomCar = () => {
@@ -116,8 +122,16 @@ class CarGame {
     }
 
     calculatePoint = (car) => {
-        if (car.x >= this.player.x) {
-            console.log("C")
+        if ((car.y - car.height - this.player.height >= HIGHWAY_WIDTHS[this.player.lane].y) && !car.hasGotPoint) {
+            this.point++;
+            car.hasGotPoint = true;
+            this.updatePointInDOM();
+        }
+    }
+
+    removeCar = (car, index) => {
+        if (car.y >= 270) {
+            this.activeCars.splice(index, 1);
         }
     }
 
@@ -125,8 +139,10 @@ class CarGame {
         this.clearCanvas();
 
         this.animateHighway();
-        this.activeCars.forEach(car => {
+        this.activeCars.forEach((car, i) => {
+            this.calculatePoint(car);
             this.animateCar(car);
+            this.removeCar(car, i)
         });
         this.animatePlayer();
 
@@ -137,7 +153,6 @@ class CarGame {
         this.gameLoop();
 
         this.generateRandomCar();
-
     }
 }
 
