@@ -216,7 +216,13 @@ function main() {
         'game-background', 'game-canvas',
         CARS, new Car(null, null, null, null, random.choice(CARS), true, 1)
     );
-    game.run();
+
+    const startGameBtn = document.getElementById('start-game-btn');
+    startGameBtn.addEventListener('click', () => {
+        const startScreen = document.querySelector('.start-screen');
+        startScreen.style.display = 'none';
+        game.run();
+    })
 }
 
 main();
